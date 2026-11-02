@@ -60,13 +60,11 @@ export function formatIndianNumber(value?: number | null): string {
 export function getAreaUnitLabel(unit: AreaUnit): string {
   const map: Record<AreaUnit, string> = {
     ACRES: 'Acres',
-    SQ_YARDS: 'Sq. Yards',
+    SQ_METERS: 'Sq. Meters',
     SQ_FEET: 'Sq. Feet',
-    HECTARES: 'Hectares',
-    BIGHA: 'Bigha',
     GUNTHA: 'Guntha'
   };
-  return map[unit] || unit;
+  return (map as Record<string, string>)[unit] || unit;
 }
 
 /**
@@ -78,9 +76,9 @@ export function getZoningLabel(zoning: ZoningCategory): string {
     COMMERCIAL: 'Commercial',
     INDUSTRIAL: 'Industrial',
     AGRICULTURAL: 'Agricultural',
-    MIXED_USE: 'Mixed Use'
+    PROPOSED: 'Proposed'
   };
-  return map[zoning] || zoning;
+  return (map as Record<string, string>)[zoning] || zoning;
 }
 
 /**
