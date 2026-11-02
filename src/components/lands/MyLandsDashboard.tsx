@@ -493,6 +493,15 @@ export const MyLandsDashboard: React.FC<MyLandsDashboardProps> = ({
                 {selectedParcel.expectedRevenueSharePercentage ? (
                   <div className="flex justify-between"><span className="text-slate-500">Revenue Share:</span> <span className="font-bold text-emerald-700">{selectedParcel.expectedRevenueSharePercentage}%</span></div>
                 ) : null}
+                {selectedParcel.expectedSecurityDeposit ? (
+                  <div className="flex justify-between"><span className="text-slate-500">Security Deposit:</span> <span className="font-bold font-mono text-emerald-700">{formatIndianCurrency(selectedParcel.expectedSecurityDeposit)}</span></div>
+                ) : null}
+                {selectedParcel.expectedRent ? (
+                  <div className="flex justify-between"><span className="text-slate-500">Expected Rent:</span> <span className="font-bold font-mono text-indigo-700">{formatIndianCurrency(selectedParcel.expectedRent)} / mo</span></div>
+                ) : null}
+                {selectedParcel.shiftingCharges ? (
+                  <div className="flex justify-between"><span className="text-slate-500">Shifting / Accom.:</span> <span className="font-bold font-mono text-indigo-700">{formatIndianCurrency(selectedParcel.shiftingCharges)}</span></div>
+                ) : null}
                 <div className="flex justify-between"><span className="text-slate-500">Expected Total:</span> <span className="font-bold font-mono">{formatIndianCurrency(selectedParcel.expectedPrice)}</span></div>
                 <div className="flex justify-between"><span className="text-slate-500">Unit Rate:</span> <span className="font-mono">{formatIndianCurrency(selectedParcel.pricePerUnit)} / {getAreaUnitLabel(selectedParcel.areaUnit)}</span></div>
                 <div className="flex justify-between"><span className="text-slate-500">Negotiable:</span> <span className="font-semibold">{selectedParcel.isPriceNegotiable ? 'Yes' : 'Firm'}</span></div>

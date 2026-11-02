@@ -14,10 +14,12 @@ import type { AuthSession } from './types/auth';
 import { publicApi } from './services/api';
 import { authService, AdminUser } from './services/auth';
 import { UNAUTHORIZED_EVENT } from './services/apiClient';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { Shield, CheckCircle2 } from 'lucide-react';
 
 function AppContent() {
   const { showToast } = useToast();
+  const { t } = useLanguage();
 
   const [developers, setDevelopers] = useState<Developer[]>([]);
   const [activeDeveloperId, setActiveDeveloperId] = useState<string>('');
@@ -160,6 +162,7 @@ function AppContent() {
 
   const handleAdminLoginSuccess = (user: AdminUser) => {
     setAdminUser(user);
+    setUserSession(authService.getSession());
     handleNavigate('admin');
   };
 
@@ -175,6 +178,33 @@ function AppContent() {
     setEditParcelId(id);
     handleNavigate('submit-land');
   };
+
+  const getDashboardNav = () => {
+    if (adminUser || (userSession?.role && String(userSession.role).toUpperCase().includes('ADMIN'))) {
+      return {
+        label: t.dashboardNav.goToAdminConsole,
+        onNavigate: () => handleNavigate('admin')
+      };
+    }
+    if (userSession?.role === 'AGENT') {
+      return {
+        label: t.dashboardNav.goToAgentDashboard,
+        onNavigate: () => handleNavigate('my-lands')
+      };
+    }
+    if (userSession?.role === 'OWNER') {
+      return {
+        label: t.dashboardNav.goToOwnerDashboard,
+        onNavigate: () => handleNavigate('my-lands')
+      };
+    }
+    return {
+      label: t.dashboardNav.goToDashboard,
+      onNavigate: () => handleNavigate('login')
+    };
+  };
+
+  const dashboardNav = getDashboardNav();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-emerald-500/20 selection:text-emerald-900">
@@ -229,6 +259,8 @@ function AppContent() {
           <PublicDirectory
             developers={developers}
             onSelectDeveloper={id => handleNavigate('showcase', id)}
+            dashboardLabel={dashboardNav.label}
+            onNavigateToDashboard={dashboardNav.onNavigate}
           />
         )}
 
@@ -323,8 +355,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AppContent />
-    </ToastProvider>
+    <LanguageProvider>
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
+    </LanguageProvider>
   );
 }

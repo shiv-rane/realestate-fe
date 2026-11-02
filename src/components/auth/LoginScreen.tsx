@@ -393,6 +393,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     Resend OTP Code
                   </button>
                 )}
+                <p className="text-[11px] text-slate-400 mt-2">
+                  Please check your inbox (and spam/promotions folder) for the 6-digit verification code.
+                </p>
               </div>
 
               <button
@@ -422,10 +425,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
         </div>
 
-        {/* Demo Helper note for development ease */}
-        <div className="mt-4 p-3 rounded-2xl bg-white/80 border border-slate-200 text-[11px] text-slate-500 text-center shadow-2xs">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-600 inline mr-1.5" />
-          <span>OTP valid for 10 minutes. If backend mock OTP is configured, use <b className="text-emerald-700">123456</b>.</span>
+        {/* Live Email Delivery Notice */}
+        <div className="mt-4 p-3 rounded-2xl bg-white/80 border border-slate-200 text-[11px] text-slate-500 text-center shadow-2xs flex items-center justify-center gap-2">
+          <Mail className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+          <span>Real-time OTP delivered to your email. Valid for 10 minutes.</span>
         </div>
       </div>
     </div>

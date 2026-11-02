@@ -3,6 +3,7 @@ import { Developer } from '../../types';
 import { VerificationBadge, ExpertiseBadge } from '../common/Badge';
 import { Modal } from '../common/Modal';
 import { useToast } from '../common/Toast';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   Building2,
   MapPin,
@@ -19,19 +20,27 @@ import {
   Send,
   Building,
   Phone,
-  User
+  User,
+  LayoutDashboard
 } from 'lucide-react';
 
 interface PublicDirectoryProps {
   developers: Developer[];
   onSelectDeveloper: (id: string) => void;
+  dashboardLabel?: string;
+  onNavigateToDashboard?: () => void;
+  onNavigateToOwnerDashboard?: () => void;
 }
 
 export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
   developers,
-  onSelectDeveloper
+  onSelectDeveloper,
+  dashboardLabel,
+  onNavigateToDashboard,
+  onNavigateToOwnerDashboard
 }) => {
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [search, setSearch] = useState('');
   const [cityFilter, setCityFilter] = useState('ALL');
   const [expertiseFilter, setExpertiseFilter] = useState('ALL');
@@ -111,28 +120,37 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
             {/* Top Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-4 shadow-2xs">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Institutional Real Estate Alliance Network</span>
+              <span>{t.hero.networkBadge}</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]">
-              We Connect <span className="text-emerald-700">Trusted Developers</span> to Land Owners and Agents
+              {t.hero.titlePart1} <span className="text-emerald-700">{t.hero.titlePart2}</span> {t.hero.titlePart3}
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-slate-600 mt-4 leading-relaxed font-normal">
-              Accelerate high-value Joint Ventures (JV), Joint Development Agreements (JDA), Outright Acquisitions, and Urban Redevelopment. Directly matching verified land parcels with India's Tier-1 RERA-accredited builders.
+              {t.hero.subtitle}
             </p>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-8">
               <a
                 href="#developers-section"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md shadow-emerald-900/10 flex items-center justify-center gap-2 transition-all"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md shadow-emerald-900/10 flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <Building2 className="w-4 h-4" />
-                <span>Explore Trusted Developers</span>
+                <span>{t.hero.exploreButton}</span>
               </a>
+
+              <button
+                type="button"
+                onClick={onNavigateToDashboard || onNavigateToOwnerDashboard}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 hover:border-slate-400 text-sm font-bold shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+                <span>{dashboardLabel || t.dashboardNav.goToDashboard}</span>
+              </button>
             </div>
           </div>
 
@@ -143,13 +161,13 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
               <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-4 text-emerald-700">
                 <LandPlot className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-slate-900 tracking-tight">For Land Owners</h3>
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">{t.hero.pillar1Title}</h3>
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Monetize your prime land parcel through structured Joint Ventures (JV) or outright buyout with India's most credible builders. Zero brokers clutter, audited financials, and guaranteed project delivery.
+                {t.hero.pillar1Desc}
               </p>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2 text-[11px] font-bold text-emerald-700">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Direct Access to Tier-1 Capital</span>
+                <span>{t.hero.pillar1Tag}</span>
               </div>
             </div>
 
@@ -158,13 +176,13 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
               <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center mb-4 text-blue-700">
                 <Briefcase className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-slate-900 tracking-tight">For Real Estate Agents</h3>
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">{t.hero.pillar2Title}</h3>
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Bring your client mandates directly to the decision-makers. Protected alliance agreements, transparent underwriting criteria, faster closing cycles, and guaranteed channel incentives.
+                {t.hero.pillar2Desc}
               </p>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2 text-[11px] font-bold text-blue-700">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Protected Mandate Rights</span>
+                <span>{t.hero.pillar2Tag}</span>
               </div>
             </div>
 
@@ -173,13 +191,13 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
               <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-4 text-amber-700">
                 <Building className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-slate-900 tracking-tight">For Trusted Developers</h3>
+              <h3 className="text-base font-bold text-slate-900 tracking-tight">{t.hero.pillar3Title}</h3>
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Source pre-screened, title-clear land opportunities, institutional parcels, and strategic redevelopment clusters across Bengaluru, Mumbai, NCR, Pune, and Hyderabad corridors.
+                {t.hero.pillar3Desc}
               </p>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2 text-[11px] font-bold text-amber-700">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>100% RERA Verified Standards</span>
+                <span>{t.hero.pillar3Tag}</span>
               </div>
             </div>
           </div>
@@ -231,7 +249,7 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search developers by company name, operating city, or RERA license..."
+              placeholder={t.hero.searchPlaceholder}
               className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:bg-white transition-colors"
             />
           </div>
@@ -244,7 +262,7 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
                 onChange={e => setCityFilter(e.target.value)}
                 className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-semibold focus:outline-none focus:border-emerald-600"
               >
-                <option value="ALL">All Metropolitan Cities</option>
+                <option value="ALL">{t.hero.allCities}</option>
                 {allCities.map(c => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -257,7 +275,7 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
                 onChange={e => setExpertiseFilter(e.target.value)}
                 className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-semibold focus:outline-none focus:border-emerald-600"
               >
-                <option value="ALL">All Expertise Models</option>
+                <option value="ALL">{t.hero.allExpertise}</option>
                 <option value="JV">Joint Venture (JV)</option>
                 <option value="JDA">Joint Development (JDA)</option>
                 <option value="OUTRIGHT">Outright Purchase</option>
@@ -356,21 +374,14 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
           <div className="p-12 text-center rounded-2xl bg-white border border-slate-200 mt-6">
             <Building2 className="w-12 h-12 text-slate-400 mx-auto mb-3" />
             <h3 className="text-base font-bold text-slate-900 mb-1">
-              {developers.length === 0 ? 'No Developers Currently Listed' : 'No Developers Match Your Filter'}
+              {developers.length === 0 ? t.hero.noDevListed : t.hero.noDevFound}
             </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto mb-4">
               {developers.length === 0
-                ? 'The verified developer network is being updated with approved partners. Land owners and agents can register parcel mandates below.'
+                ? 'The verified developer network is being updated with approved partners.'
                 : 'Try resetting the city or core expertise filter.'}
             </p>
-            {developers.length === 0 ? (
-              <button
-                onClick={() => setLandModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white shadow-sm cursor-pointer"
-              >
-                Submit Land Parcel Mandate
-              </button>
-            ) : (
+            {developers.length > 0 && (
               <button
                 onClick={() => {
                   setSearch('');
@@ -379,7 +390,7 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
                 }}
                 className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 cursor-pointer"
               >
-                Reset Filters
+                {t.hero.resetFilters}
               </button>
             )}
           </div>

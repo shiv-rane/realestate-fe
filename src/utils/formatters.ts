@@ -91,7 +91,8 @@ export function getDealTypeLabel(dealType: ProposedDealType): string {
     JOINT_DEVELOPMENT: 'Joint Development (JDA)',
     JOINT_VENTURE: 'Joint Venture (JV)',
     OUTRIGHT_SALE: 'Outright Sale',
-    LONG_TERM_LEASE: 'Long Term Lease'
+    LONG_TERM_LEASE: 'Redevelopment',
+    REDEVELOPMENT: 'Redevelopment'
   };
   return map[dealType] || dealType;
 }
