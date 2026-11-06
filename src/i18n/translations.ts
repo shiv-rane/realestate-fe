@@ -149,8 +149,8 @@ export const translations: Record<Language, TranslationDictionary> = {
     hero: {
       networkBadge: 'Institutional Real Estate Alliance Network',
       titlePart1: 'We Connect',
-      titlePart2: 'Trusted Developers',
-      titlePart3: 'to Land Owners and Agents',
+      titlePart2: 'Land Owners and Agents',
+      titlePart3: 'to Trusted Developers',
       subtitle:
         "Accelerate high-value Joint Ventures (JV), Joint Development Agreements (JDA), Outright Acquisitions, and Urban Redevelopment. Directly matching verified land parcels with India's Tier-1 RERA-accredited builders.",
       exploreButton: 'Explore Trusted Developers',
@@ -282,8 +282,8 @@ export const translations: Record<Language, TranslationDictionary> = {
     hero: {
       networkBadge: 'संस्थात्मक रिअल इस्टेट विकास भागीदारी नेटवर्क',
       titlePart1: 'आम्ही जोडतो',
-      titlePart2: 'विश्वसनीय विकासकांना',
-      titlePart3: 'जमीन मालक व एजंट्सशी',
+      titlePart2: 'जमीन मालक व एजंट्सना',
+      titlePart3: 'विश्वसनीय विकासकांशी',
       subtitle:
         'संयुक्त भागीदारी (JV), संयुक्त विकास करार (JDA), थेट खरेदी-विक्री आणि शहरी पुनर्विकासाला गती द्या. खात्रीशीर जमीन पार्सल्स थेट भारतातील नामांकित RERA-नोंदणीकृत बिल्डर्सशी जोडणारा मंच.',
       exploreButton: 'विश्वसनीय विकासक शोधा',

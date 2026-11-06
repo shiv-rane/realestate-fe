@@ -15,6 +15,7 @@ import { publicApi } from './services/api';
 import { authService, AdminUser } from './services/auth';
 import { UNAUTHORIZED_EVENT } from './services/apiClient';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { LanguageSelectionModal } from './components/common/LanguageSelectionModal';
 import { Shield, CheckCircle2 } from 'lucide-react';
 
 function AppContent() {
@@ -198,16 +199,22 @@ function AppContent() {
         onNavigate: () => handleNavigate('my-lands')
       };
     }
-    return {
-      label: t.dashboardNav.goToDashboard,
-      onNavigate: () => handleNavigate('login')
-    };
+    if (userSession) {
+      return {
+        label: t.dashboardNav.goToDashboard,
+        onNavigate: () => handleNavigate('my-lands')
+      };
+    }
+    return null;
   };
 
   const dashboardNav = getDashboardNav();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-emerald-500/20 selection:text-emerald-900">
+      {/* Auto Language Selection Modal on New Open */}
+      <LanguageSelectionModal />
+
       {/* Top Navbar */}
       <Navbar
         currentView={currentView}
@@ -259,8 +266,8 @@ function AppContent() {
           <PublicDirectory
             developers={developers}
             onSelectDeveloper={id => handleNavigate('showcase', id)}
-            dashboardLabel={dashboardNav.label}
-            onNavigateToDashboard={dashboardNav.onNavigate}
+            dashboardLabel={dashboardNav?.label}
+            onNavigateToDashboard={dashboardNav?.onNavigate}
           />
         )}
 

@@ -143,14 +143,16 @@ export const PublicDirectory: React.FC<PublicDirectoryProps> = ({
                 <span>{t.hero.exploreButton}</span>
               </a>
 
-              <button
-                type="button"
-                onClick={onNavigateToDashboard || onNavigateToOwnerDashboard}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 hover:border-slate-400 text-sm font-bold shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-              >
-                <LayoutDashboard className="w-4 h-4 text-emerald-600" />
-                <span>{dashboardLabel || t.dashboardNav.goToDashboard}</span>
-              </button>
+              {onNavigateToDashboard && (
+                <button
+                  type="button"
+                  onClick={onNavigateToDashboard}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 hover:border-slate-400 text-sm font-bold shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+                  <span>{dashboardLabel || t.dashboardNav.goToDashboard}</span>
+                </button>
+              )}
             </div>
           </div>
 
