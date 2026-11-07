@@ -161,8 +161,11 @@ export async function apiClient<T>(
     });
   } catch (err: any) {
     if (err.name === 'TypeError' || err.message?.includes('fetch') || err.message?.includes('Failed to fetch')) {
+      const hint = baseUrl.includes('localhost')
+        ? 'Please ensure Spring Boot is running on port 8080.'
+        : 'Please ensure backend service is online (free Render instances may take ~50s to wake up) and CORS is allowed.';
       throw new ApiError(
-        `Unable to connect to backend server at ${baseUrl}. Please ensure Spring Boot is running on port 8080.`,
+        `Unable to connect to backend server at ${baseUrl}. ${hint}`,
         0
       );
     }

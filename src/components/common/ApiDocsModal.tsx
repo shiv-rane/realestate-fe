@@ -181,7 +181,7 @@ export const ApiDocsModal: React.FC<ApiDocsModalProps> = ({ isOpen, onClose }) =
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
             <div>
               <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                Backend Base URL (Optional, e.g. http://localhost:8080)
+                Backend Base URL (Optional, e.g. https://realestate-be-hur9.onrender.com)
               </label>
               <div className="relative">
                 <Globe className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
@@ -189,7 +189,7 @@ export const ApiDocsModal: React.FC<ApiDocsModalProps> = ({ isOpen, onClose }) =
                   type="text"
                   value={backendUrlInput}
                   onChange={e => setBackendUrlInput(e.target.value)}
-                  placeholder="http://localhost:8080"
+                  placeholder="https://realestate-be-hur9.onrender.com"
                   className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-emerald-600 font-mono"
                 />
               </div>
