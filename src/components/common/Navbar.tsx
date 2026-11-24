@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Shield,
   User,
-  ArrowLeft,
   LogOut,
   LayoutDashboard,
   PlusCircle,
@@ -139,26 +138,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </span>
                 </div>
               </div>
-
-              {currentView === 'admin' ? (
-                <button
-                  onClick={() => handleNavClick('directory')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer"
-                  title="View Public Portal Directory"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span className="hidden xl:inline">Public Portal</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleNavClick('admin')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all cursor-pointer"
-                  title="Open Admin Console"
-                >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
-                  <span className="hidden xl:inline">Admin Console</span>
-                </button>
-              )}
 
               <button
                 onClick={onLogout}

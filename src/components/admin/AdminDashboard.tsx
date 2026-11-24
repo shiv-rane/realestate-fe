@@ -228,7 +228,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div>
           <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-emerald-700 uppercase">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>EstateHub Alliance Management</span>
+            <span>BhoomiSetu Alliance Management</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
             Admin Management Console
