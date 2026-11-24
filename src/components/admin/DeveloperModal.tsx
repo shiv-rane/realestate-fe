@@ -198,7 +198,8 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({
       return;
     }
 
-    const projId = editingProjectIndex !== null ? projects[editingProjectIndex].id : `proj-${Date.now()}`;
+    const existing = editingProjectIndex !== null ? projects[editingProjectIndex] : null;
+    const projId = existing ? (existing.projectId || existing.id) : `proj-${Date.now()}`;
     const newProject: Project = {
       id: projId,
       projectId: projId,
@@ -219,7 +220,7 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({
       reraProjectId: projReraNumber.trim() || `PRM/KA/RERA/${Date.now()}`,
       deliveredYear: projDeliveredYear ? Number(projDeliveredYear) : null,
       amenities: projAmenities,
-      createdAt: new Date().toISOString()
+      createdAt: existing?.createdAt || new Date().toISOString()
     };
 
     if (editingProjectIndex !== null) {
@@ -265,7 +266,7 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({
 
     setSubmitting(true);
     try {
-      const profileId = developerToEdit ? developerToEdit.id : `dev-${Date.now()}`;
+      const profileId = developerToEdit ? (developerToEdit.id || developerToEdit.profileId) : `dev-${Date.now()}`;
       const completedCount = projects.filter(p => p.status === 'DELIVERED').length;
       const upcomingCount = projects.filter(p => p.status === 'UPCOMING').length;
 
@@ -677,7 +678,7 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({
               disabled={submitting}
               className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-all disabled:opacity-50"
             >
-              {submitting ? 'Saving Developer...' : developerToEdit ? 'Update Developer' : 'Save Developer Profile'}
+              {submitting ? 'Saving Developer & Projects...' : developerToEdit ? 'Update Developer' : 'Save Developer Profile'}
             </button>
           </div>
         </form>

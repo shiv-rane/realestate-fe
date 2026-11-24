@@ -94,13 +94,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Developer Handlers
   const handleCreateOrUpdateDeveloper = async (formData: any) => {
-    if (developerToEdit) {
-      await adminApi.updateDeveloper(developerToEdit.id, formData);
-      showToast('success', 'Developer Updated', `${formData.name} was successfully updated.`);
+    const devId = developerToEdit ? (developerToEdit.id || developerToEdit.profileId) : null;
+    let targetDevId = devId;
+
+    if (developerToEdit && devId) {
+      await adminApi.updateDeveloper(devId, formData);
+      showToast('success', 'Developer Updated', `${formData.companyName || formData.name} was successfully updated.`);
     } else {
       const created = await adminApi.createDeveloper(formData);
-      showToast('success', 'Developer Created', `${created.name} registered under ${created.reraNumber}`);
+      targetDevId = created.id || created.profileId;
+      showToast('success', 'Developer Created', `${created.companyName || created.name} registered under ${created.reraNumber}`);
     }
+
+    // Synchronize associated projects with backend
+    if (targetDevId && Array.isArray(formData.projects)) {
+      const existingProjects = developerToEdit?.projects || [];
+      const newProjectsList = formData.projects;
+
+      // 1. Delete removed projects (existed on backend previously, but removed in modal)
+      const deletedProjects = existingProjects.filter(ep => {
+        const epId = ep.projectId || ep.id;
+        return epId && !newProjectsList.some((np: any) => (np.projectId || np.id) === epId);
+      });
+
+      for (const dp of deletedProjects) {
+        const pId = dp.projectId || dp.id;
+        if (pId && !pId.startsWith('proj-')) {
+          try {
+            await adminApi.deleteProject(targetDevId, pId);
+          } catch (err: any) {
+            console.warn(`Failed to delete project ${pId}`, err);
+          }
+        }
+      }
+
+      // 2. Add or update projects
+      for (const proj of newProjectsList) {
+        const projId = proj.projectId || proj.id;
+        const isExisting =
+          projId &&
+          !projId.startsWith('proj-') &&
+          existingProjects.some(ep => (ep.projectId || ep.id) === projId);
+
+        if (isExisting) {
+          try {
+            await adminApi.updateProject(targetDevId, projId, proj);
+          } catch (err: any) {
+            console.error(`Failed to update project ${proj.name}`, err);
+            throw new Error(`Project "${proj.name}" update failed: ${err.message}`);
+          }
+        } else {
+          try {
+            await adminApi.addProject(targetDevId, proj);
+          } catch (err: any) {
+            console.error(`Failed to add project ${proj.name}`, err);
+            throw new Error(`Project "${proj.name}" creation failed: ${err.message}`);
+          }
+        }
+      }
+    }
+
     await loadData();
   };
 
@@ -108,7 +161,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!developerToDelete) return;
     setDeletingDev(true);
     try {
-      await adminApi.deleteDeveloper(developerToDelete.id);
+      const devId = developerToDelete.id || developerToDelete.profileId;
+      if (!devId) return;
+      await adminApi.deleteDeveloper(devId);
       showToast('success', 'Developer Deleted', `${developerToDelete.name} has been removed.`);
       setDeleteDevModalOpen(false);
       setDeveloperToDelete(null);

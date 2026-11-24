@@ -151,6 +151,56 @@ export const publicApi = {
   }
 };
 
+export function formatDeveloperRequest(data: any): any {
+  return {
+    companyName: (data.companyName || data.name || '').trim(),
+    contactPersonName: (data.contactPersonName || data.contactPerson?.name || '').trim(),
+    contactEmail: (data.contactEmail || data.contactPerson?.email || '').trim(),
+    contactPhone: (data.contactPhone || data.contactPerson?.phone || '').trim(),
+    websiteUrl: (data.websiteUrl || '').trim(),
+    reraNumber: (data.reraNumber || '').trim(),
+    gstNumber: (data.gstNumber || '').trim(),
+    description: (data.description || '').trim(),
+    establishedYear: data.establishedYear ? Number(data.establishedYear) : null,
+    yearsOfExperience: Math.max(0, Number(data.yearsOfExperience || 0)),
+    happyCustomers: Math.max(0, Number(data.happyCustomers || 0)),
+    coreExpertise: Array.isArray(data.coreExpertise) && data.coreExpertise.length > 0 ? data.coreExpertise : ['JV', 'JDA'],
+    operatingCities: Array.isArray(data.operatingCities) && data.operatingCities.length > 0 ? data.operatingCities : ['Bengaluru'],
+    verificationStatus: data.verificationStatus || 'APPROVED'
+  };
+}
+
+export function formatProjectRequest(p: any): any {
+  const projectType = p.projectType || p.type || 'RESIDENTIAL';
+  const status = p.status || 'ONGOING';
+  const city = (p.city || '').trim();
+  const name = (p.name || '').trim();
+  const address = (p.address || (city ? `${city} Prime Corridor` : '')).trim();
+  const pincode = (p.pincode || '').trim();
+  const areaSqFtMin = Number(p.areaSqFtMin ?? p.areaMinSqFt ?? 1000);
+  const areaSqFtMax = Number(p.areaSqFtMax ?? p.areaMaxSqFt ?? 3000);
+  const totalUnits = Math.max(1, Number(p.totalUnits || 1));
+  const reraProjectNumber = (p.reraProjectNumber || p.reraProjectId || '').trim();
+  const deliveredYear = p.deliveredYear ? Number(p.deliveredYear) : null;
+  const amenities = Array.isArray(p.amenities) ? p.amenities : [];
+
+  return {
+    name,
+    description: (p.description || '').trim(),
+    projectType,
+    status,
+    city,
+    address,
+    pincode,
+    areaSqFtMin,
+    areaSqFtMax,
+    totalUnits,
+    reraProjectNumber,
+    deliveredYear,
+    amenities
+  };
+}
+
 /**
  * Production Admin API Client (/api/v1/admin)
  */
@@ -191,10 +241,18 @@ export const adminApi = {
    * Create new developer record in database
    */
   async createDeveloper(data: any): Promise<Developer> {
-    return await apiRequest<Developer>('/api/v1/admin/developers', {
+    const payload = formatDeveloperRequest(data);
+    const created = await apiRequest<any>('/api/v1/admin/developers', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(payload)
     });
+    return {
+      ...created,
+      id: created.id || created.profileId,
+      name: created.companyName || created.name,
+      companyName: created.companyName || created.name,
+      projects: created.projects || []
+    };
   },
 
   /**
@@ -202,10 +260,18 @@ export const adminApi = {
    * Update developer details
    */
   async updateDeveloper(id: string, updates: any): Promise<Developer> {
-    return await apiRequest<Developer>(`/api/v1/admin/developers/${id}`, {
+    const payload = formatDeveloperRequest(updates);
+    const updated = await apiRequest<any>(`/api/v1/admin/developers/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(updates)
+      body: JSON.stringify(payload)
     });
+    return {
+      ...updated,
+      id: updated.id || updated.profileId || id,
+      name: updated.companyName || updated.name,
+      companyName: updated.companyName || updated.name,
+      projects: updated.projects || []
+    };
   },
 
   /**
@@ -223,8 +289,47 @@ export const adminApi = {
    * GET /api/v1/admin/developers/{devId}/projects
    */
   async getDeveloperProjects(devId: string): Promise<Project[]> {
-    const data = await apiRequest<Project[]>(`/api/v1/admin/developers/${devId}/projects`);
-    return Array.isArray(data) ? data : [];
+    try {
+      const data = await apiRequest<any[]>(`/api/v1/admin/developers/${devId}/projects`);
+      if (Array.isArray(data)) {
+        return data.map((p: any) => ({
+          ...p,
+          id: p.id || p.projectId,
+          projectId: p.projectId || p.id,
+          projectType: p.projectType || p.type || 'RESIDENTIAL',
+          areaSqFtMin: p.areaSqFtMin ?? p.areaMinSqFt ?? 1000,
+          areaSqFtMax: p.areaSqFtMax ?? p.areaMaxSqFt ?? 3000,
+          reraProjectNumber: p.reraProjectNumber || p.reraProjectId || ''
+        }));
+      }
+    } catch {
+      // Backend AdminController does not have a dedicated GET /projects; fallback to developer profile
+      try {
+        const profile = await publicApi.getDeveloperProfile(devId);
+        return (profile.projects || []).map((p: any) => ({
+          ...p,
+          id: p.id || p.projectId,
+          projectId: p.projectId || p.id,
+          projectType: p.projectType || p.type || 'RESIDENTIAL',
+          areaSqFtMin: p.areaSqFtMin ?? p.areaMinSqFt ?? 1000,
+          areaSqFtMax: p.areaSqFtMax ?? p.areaMaxSqFt ?? 3000,
+          reraProjectNumber: p.reraProjectNumber || p.reraProjectId || ''
+        }));
+      } catch {
+        try {
+          const devs = await adminApi.getDevelopers();
+          const found = devs.find(d => d.id === devId || d.profileId === devId);
+          return (found?.projects || []).map((p: any) => ({
+            ...p,
+            id: p.id || p.projectId,
+            projectId: p.projectId || p.id
+          }));
+        } catch {
+          // ignore
+        }
+      }
+    }
+    return [];
   },
 
   /**
@@ -233,12 +338,18 @@ export const adminApi = {
    */
   async addProject(
     devId: string,
-    data: Omit<Project, 'id' | 'developerId' | 'createdAt' | 'updatedAt'>
+    data: any
   ): Promise<Project> {
-    return await apiRequest<Project>(`/api/v1/admin/developers/${devId}/projects`, {
+    const payload = formatProjectRequest(data);
+    const res = await apiRequest<any>(`/api/v1/admin/developers/${devId}/projects`, {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(payload)
     });
+    return {
+      ...res,
+      id: res.id || res.projectId,
+      projectId: res.projectId || res.id
+    };
   },
 
   /**
@@ -248,12 +359,18 @@ export const adminApi = {
   async updateProject(
     devId: string,
     projectId: string,
-    updates: Partial<Project>
+    updates: any
   ): Promise<Project> {
-    return await apiRequest<Project>(`/api/v1/admin/developers/${devId}/projects/${projectId}`, {
+    const payload = formatProjectRequest(updates);
+    const res = await apiRequest<any>(`/api/v1/admin/developers/${devId}/projects/${projectId}`, {
       method: 'PUT',
-      body: JSON.stringify(updates)
+      body: JSON.stringify(payload)
     });
+    return {
+      ...res,
+      id: res.id || res.projectId || projectId,
+      projectId: res.projectId || res.id || projectId
+    };
   },
 
   /**

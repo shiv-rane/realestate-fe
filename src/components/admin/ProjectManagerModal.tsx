@@ -73,7 +73,9 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
     if (!developer) return;
     setLoadingList(true);
     try {
-      const projs = await adminApi.getDeveloperProjects(developer.id);
+      const devId = developer.id || developer.profileId;
+      if (!devId) return;
+      const projs = await adminApi.getDeveloperProjects(devId);
       setProjectsList(projs);
     } catch (err) {
       console.error(err);
@@ -109,7 +111,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
   };
 
   const handleEditClick = (p: Project) => {
-    setEditingProjectId(p.id);
+    setEditingProjectId(p.projectId || p.id);
     setName(p.name);
     setType(p.projectType || p.type || 'RESIDENTIAL');
     setStatus(p.status);
@@ -132,7 +134,9 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      await adminApi.deleteProject(developer.id, projectId);
+      const devId = developer.id || developer.profileId;
+      if (!devId) return;
+      await adminApi.deleteProject(devId, projectId);
       showToast('success', 'Project Deleted', 'Project successfully removed from portfolio.');
       await loadProjects();
       onProjectsChanged();
@@ -183,16 +187,25 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
 
     setSubmitting(true);
     try {
+      const devId = developer.id || developer.profileId;
+      if (!devId) {
+        showToast('error', 'Error', 'Developer ID not found');
+        return;
+      }
       const payload = {
         name: name.trim(),
+        projectType: type,
         type,
         status,
         city: city.trim(),
         address: address.trim() || `${city.trim()} Prime Corridor`,
         pincode: pincode.trim(),
+        areaSqFtMin: Number(areaMinSqFt),
         areaMinSqFt: Number(areaMinSqFt),
+        areaSqFtMax: Number(areaMaxSqFt),
         areaMaxSqFt: Number(areaMaxSqFt),
         totalUnits: Number(totalUnits),
+        reraProjectNumber: reraProjectId.trim(),
         reraProjectId: reraProjectId.trim(),
         deliveredYear: deliveredYear ? Number(deliveredYear) : undefined,
         amenities,
@@ -201,10 +214,10 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
       };
 
       if (editingProjectId) {
-        await adminApi.updateProject(developer.id, editingProjectId, payload);
+        await adminApi.updateProject(devId, editingProjectId, payload);
         showToast('success', 'Project Updated', `${name} has been updated.`);
       } else {
-        await adminApi.addProject(developer.id, payload);
+        await adminApi.addProject(devId, payload);
         showToast('success', 'Project Added', `${name} added to ${developer.name}.`);
       }
 
