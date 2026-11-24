@@ -210,7 +210,21 @@ export const adminApi = {
    * Aggregated developer counts from database
    */
   async getStats(): Promise<AdminStats> {
-    return await apiRequest<AdminStats>('/api/v1/admin/stats');
+    const data = await apiRequest<any>('/api/v1/admin/stats');
+    const total = Number(data?.total ?? data?.totalDevelopers ?? 0);
+    const pending = Number(data?.pending ?? data?.pendingVerification ?? 0);
+    const approved = Number(data?.approved ?? data?.approvedDevelopers ?? 0);
+    const rejected = Number(data?.rejected ?? data?.rejectedDevelopers ?? 0);
+    return {
+      total,
+      pending,
+      approved,
+      rejected,
+      totalDevelopers: total,
+      pendingVerification: pending,
+      approvedDevelopers: approved,
+      rejectedDevelopers: rejected
+    };
   },
 
   /**

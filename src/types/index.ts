@@ -74,6 +74,10 @@ export interface AdminStats {
   pending: number;
   approved: number;
   rejected: number;
+  totalDevelopers?: number;
+  pendingVerification?: number;
+  approvedDevelopers?: number;
+  rejectedDevelopers?: number;
 }
 
 export interface ComputedDeveloperStats {

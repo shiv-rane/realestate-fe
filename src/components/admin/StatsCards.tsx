@@ -17,7 +17,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
     {
       id: 'ALL',
       title: 'Total Developers',
-      count: stats.total,
+      count: Number(stats?.total ?? stats?.totalDevelopers ?? 0),
       label: 'All registered entities',
       icon: <Building2 className="w-5 h-5 text-slate-700" />,
       border: 'hover:border-slate-300',
@@ -27,7 +27,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
     {
       id: 'PENDING',
       title: 'Pending Review',
-      count: stats.pending,
+      count: Number(stats?.pending ?? stats?.pendingVerification ?? 0),
       label: 'Requires compliance review',
       icon: <Clock className="w-5 h-5 text-amber-600" />,
       border: 'hover:border-amber-300',
@@ -37,7 +37,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
     {
       id: 'APPROVED',
       title: 'RERA Approved',
-      count: stats.approved,
+      count: Number(stats?.approved ?? stats?.approvedDevelopers ?? 0),
       label: 'Live verified portals',
       icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
       border: 'hover:border-emerald-300',
@@ -47,7 +47,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
     {
       id: 'REJECTED',
       title: 'Rejected / Inactive',
-      count: stats.rejected,
+      count: Number(stats?.rejected ?? stats?.rejectedDevelopers ?? 0),
       label: 'Failed credential checks',
       icon: <XCircle className="w-5 h-5 text-rose-600" />,
       border: 'hover:border-rose-300',

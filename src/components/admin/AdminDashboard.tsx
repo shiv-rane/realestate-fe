@@ -74,13 +74,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     try {
       setLoading(true);
       const [statsData, devsData, landsData] = await Promise.all([
-        adminApi.getStats(),
+        adminApi.getStats().catch(err => {
+          console.warn('adminApi.getStats failed, will compute fallback from developers', err);
+          return null;
+        }),
         adminApi.getDevelopers(devStatusFilter as any),
-        landApi.getAllLands()
+        landApi.getAllLands().catch(() => [])
       ]);
-      setStats(statsData);
-      setDevelopers(devsData);
-      setParcels(landsData);
+
+      if (statsData && typeof statsData.total === 'number') {
+        setStats(statsData);
+      } else if (Array.isArray(devsData)) {
+        const total = devsData.length;
+        const pending = devsData.filter(d => d.verificationStatus === 'PENDING').length;
+        const approved = devsData.filter(d => d.verificationStatus === 'APPROVED').length;
+        const rejected = devsData.filter(d => d.verificationStatus === 'REJECTED').length;
+        setStats({ total, pending, approved, rejected });
+      }
+
+      setDevelopers(devsData || []);
+      setParcels(landsData || []);
     } catch (err: any) {
       showToast('error', 'Failed to load Admin data', err.message);
     } finally {
