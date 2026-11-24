@@ -4,7 +4,6 @@ import { useToast } from '../common/Toast';
 import {
   Shield,
   Mail,
-  User,
   ArrowRight,
   ShieldCheck,
   ArrowLeft,
@@ -26,7 +25,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onNaviga
   const [step, setStep] = useState<1 | 2>(1);
 
   // Form inputs (pure empty state for production)
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
 
@@ -61,12 +59,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onNaviga
     setInfoMsg('');
 
     const cleanEmail = email.trim().toLowerCase();
-    const cleanName = name.trim();
-
-    if (!cleanName) {
-      setErrorMsg('Please enter your administrator name.');
-      return;
-    }
 
     if (!cleanEmail) {
       setErrorMsg('Please enter your work email address.');
@@ -75,7 +67,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onNaviga
 
     setLoading(true);
     try {
-      const res = await authService.sendOtp(cleanName, cleanEmail, 'ADMIN');
+      const res = await authService.sendOtp('Administrator', cleanEmail, 'ADMIN');
       showToast('success', 'OTP Sent', res.message);
       setInfoMsg(res.message);
       setOtp('');
@@ -145,7 +137,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onNaviga
             </div>
 
             <h1 className="text-xl font-extrabold text-white tracking-tight">
-              ESTATE<span className="text-emerald-400">HUB</span> Admin Gate
+              Bhoomi<span className="text-emerald-400">Setu</span> Admin Gate
             </h1>
             <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
               Passwordless Two-Step Verification
@@ -191,23 +183,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onNaviga
             <form onSubmit={handleSendOtp} className="p-6 sm:p-8 space-y-5">
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Full Name *
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Enter your name"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 font-medium transition-all"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                   Work Email *
                 </label>
                 <div className="relative">
@@ -215,6 +190,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onNaviga
                   <input
                     type="email"
                     required
+                    autoFocus
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="admin@yourcompany.com"

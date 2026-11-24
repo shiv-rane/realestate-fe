@@ -71,10 +71,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-extrabold tracking-wider text-base text-slate-900">
-                  ESTATE<span className="text-emerald-600">HUB</span>
-                </span>
-                <span className="px-1.5 py-0.2 text-[9px] font-bold tracking-widest bg-emerald-50 text-emerald-700 border border-emerald-200 rounded uppercase">
-                  PORTAL
+                  Bhoomi<span className="text-emerald-600">Setu</span>
                 </span>
               </div>
               <span className="text-[10px] text-slate-500 block -mt-0.5 tracking-wide">

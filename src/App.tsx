@@ -312,7 +312,7 @@ function AppContent() {
                   <Shield className="w-4 h-4" />
                 </div>
                 <span className="font-extrabold text-slate-900 text-base tracking-wide">
-                  ESTATE<span className="text-emerald-600">HUB</span> PORTAL
+                  Bhoomi<span className="text-emerald-600">Setu</span>
                 </span>
               </div>
               <p className="text-slate-500 text-xs leading-relaxed">
@@ -347,7 +347,7 @@ function AppContent() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
-            <p>© 2026 ESTATEHUB. All rights reserved. Real Estate Developer & Land Alliance Suite.</p>
+            <p>© 2026 BhoomiSetu. All rights reserved. Real Estate Developer & Land Alliance Suite.</p>
             <div className="flex items-center gap-4">
               <span>Privacy Policy</span>
               <span>Terms of Service</span>

@@ -56,9 +56,9 @@ export const authService = {
    * Step 1: Send OTP
    * POST /api/v1/auth/send-otp
    */
-  async sendOtp(name: string, email: string, role: 'OWNER' | 'AGENT' | 'ADMIN' = 'OWNER'): Promise<SendOtpResponse> {
+  async sendOtp(name: string = 'Administrator', email: string, role: 'OWNER' | 'AGENT' | 'ADMIN' = 'OWNER'): Promise<SendOtpResponse> {
     const cleanEmail = email.trim().toLowerCase();
-    const cleanName = name.trim();
+    const cleanName = (name?.trim() || cleanEmail.split('@')[0] || 'Administrator').trim();
     const cleanRole = role.toUpperCase() as any;
 
     localStorage.setItem(TEMP_ROLE_KEY, cleanRole);
